@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">GPA Calc</string>
+    <string name="calculate">Calculate</string>
+    <string name="gpaHint">Your letter grade</string>
+    <string name="credit">Credit</string>
+    <string name="add">Add course</string>
+    <string name="clear">Clear All</string>
+</resources>
