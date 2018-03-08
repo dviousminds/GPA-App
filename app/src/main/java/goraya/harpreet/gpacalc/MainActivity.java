@@ -5,15 +5,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.InputFilter;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private Button mCalculateButton;
     private Button mAddCourseButton;
@@ -21,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText mEnterGPA;
     private TextView mGpaResult;
     private EditText mCredit;
+    private Spinner spinner;
 
     private ArrayList<Grades> gradesList = new ArrayList<>();
 
@@ -38,9 +42,26 @@ public class MainActivity extends AppCompatActivity {
         mEnterGPA.setFilters(new InputFilter[]{new InputFilter.AllCaps(), new InputFilter.LengthFilter(2)});
         mGpaResult = findViewById(R.id.result_Textview);
         mCredit = findViewById(R.id.credit_enter_box);
+        spinner = findViewById(R.id.spinner);
 
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.gpa_types, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(this); //runs spinner's onItemSelected
 
     }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        String sSelected = parent.getItemAtPosition(position).toString() + " selected";
+        Toast.makeText(this, sSelected, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
+
 
     public void buttonClicked(View v) {
         if (v.getId() == mAddCourseButton.getId()) {
@@ -84,6 +105,9 @@ public class MainActivity extends AppCompatActivity {
             gradesList.clear();
             mGpaResult.setText("");
             mClearButton.setVisibility(View.INVISIBLE);
+        } else if (v.getId() == spinner.getId()) {
+
+
         } else {
             Toast.makeText(getApplicationContext(), "Umm, no buttons pressed?", Toast.LENGTH_SHORT).show();
         }
@@ -110,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 }
+
 
 class Grades {
 

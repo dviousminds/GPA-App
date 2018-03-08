@@ -5,4 +5,9 @@
     <string name="credit">Credit</string>
     <string name="add">Add course</string>
     <string name="clear">Clear All</string>
+    <string name="GpaPrompt">Type of GPA</string>
+    <string-array name="gpa_types">
+        <item>4.0 GPA</item>
+        <item>9.0 GPA</item>
+    </string-array>
 </resources>

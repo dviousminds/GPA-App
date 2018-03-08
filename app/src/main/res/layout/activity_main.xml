@@ -37,26 +37,46 @@
         </LinearLayout>
 
 
+        <LinearLayout
+            android:id="@+id/spinner_n_addText_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_below="@id/editTextlayout">
+
+
+            <Button
+                android:id="@+id/add_button"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/editTextlayout"
+                android:backgroundTint="@color/colorPrimaryDark"
+                android:onClick="buttonClicked"
+                android:text="@string/add" />
+
+            <Spinner
+                android:id="@+id/spinner"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/result_Textview"
+                android:entries="@array/gpa_types"
+                android:layout_below="@+id/editTextlayout"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+
         <Button
             android:id="@+id/calc_button"
             style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/add_button"
+            android:layout_below="@id/spinner_n_addText_layout"
             android:backgroundTint="@color/colorAccent"
             android:text="@string/calculate"
             android:onClick="buttonClicked"
             android:textColor="@android:color/white" />
-
-        <Button
-            android:id="@+id/add_button"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/editTextlayout"
-            android:backgroundTint="@color/colorPrimaryDark"
-            android:onClick="buttonClicked"
-            android:text="@string/add" />
 
         <TextView
             android:id="@+id/result_Textview"
