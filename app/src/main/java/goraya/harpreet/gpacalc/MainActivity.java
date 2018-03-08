@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private TextView mGpaResult;
     private EditText mCredit;
     private Spinner spinner;
+    private boolean four_scale;
 
     private ArrayList<Grades> gradesList = new ArrayList<>();
 
@@ -53,8 +54,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        String sSelected = parent.getItemAtPosition(position).toString() + " selected";
+        String sSelected = parent.getItemAtPosition(position).toString();
         Toast.makeText(this, sSelected, Toast.LENGTH_SHORT).show();
+        if (spinner.getSelectedItemPosition() == 0) {
+            Log.d("grades", "four_scale is now true");
+            four_scale = true;
+        } else {
+            four_scale = false;
+            Log.d("grades", "four_scale is now false");
+
+        }
+
+
     }
 
     @Override
@@ -71,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 String gpa = mEnterGPA.getText().toString();
                 Double credit = Double.parseDouble(mCredit.getText().toString());
 
-                Grades grades = new Grades(gpa, credit);
+                Grades grades = new Grades(gpa, credit, four_scale);
                 gradesList.add(grades);
 
                 Log.d("mytag", "filling list");
@@ -89,17 +100,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         } else if (v.getId() == mCalculateButton.getId()) {
 
-            double gpaResult = 0;
-            double totalCredits = 0;
-            double totalCreditTimes = 0;
 
-            for (Grades c : gradesList) {
-                totalCredits += c.getCredit(); // 3 + 2 + 3
-                totalCreditTimes += c.getCreditTimes(); // A(4.0) * 3
-            }
-
-            gpaResult = totalCreditTimes / totalCredits;
-            mGpaResult.setText(String.format("GPA: %.2f", gpaResult));
+            mGpaResult.setText(String.format("GPA: %.2f", calculteGPA()));
 
         } else if (v.getId() == mClearButton.getId()) {
             gradesList.clear();
@@ -123,10 +125,23 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
+    public double calculteGPA() {
+        double gpaResult = 0;
+        double totalCredits = 0;
+        double totalCreditTimes = 0;
+
+        for (Grades c : gradesList) {
+            totalCredits += c.getCredit(); // 3 + 2 + 3
+            totalCreditTimes += c.getCreditTimes(); // A(4.0) * 3
+        }
+
+        return totalCreditTimes / totalCredits;
+    }
+
 
     public boolean isValid() {
         if (mCredit.getText() != null && mCredit.getText().toString() != "" && mEnterGPA.getText().toString() != "") {
-            if ((mEnterGPA.getText().toString().matches("^A[+-]?|[BCD][+-]?$")) && (Integer.parseInt(mCredit.getText().toString()) >= 1)) {
+            if ((mEnterGPA.getText().toString().matches("[A-D][+-]?|F")) && (Integer.parseInt(mCredit.getText().toString()) >= 1)) {
                 return true;
             }
         }
@@ -143,26 +158,40 @@ class Grades {
     private double creditTimes;
     private static HashMap<String, Double> map = new HashMap<>();
 
-    public Grades(String g, double c) {
+    public Grades(String g, double c, boolean four_scale) {
         grade = g;
         credit = c;
 
-        map.put("A+", 4.3);
-        map.put("A", 4.0);
-        map.put("A-", 3.7);
-        map.put("B+", 3.3);
-        map.put("B", 3.0);
-        map.put("B-", 2.7);
-        map.put("C+", 2.3);
-        map.put("C", 2.0);
-        map.put("C-", 1.7);
-        map.put("D+", 1.3);
-        map.put("D", 1.0);
-        map.put("D-", 0.7);
-        map.put("F", 0.0);
+        if (four_scale == true) {
+            map.put("A+", 4.0);
+            map.put("A", 3.8);
+            map.put("B+", 3.3);
+            map.put("B", 3.0);
+            map.put("C+", 2.3);
+            map.put("C", 2.0);
+            map.put("D+", 1.3);
+            map.put("D", 1.0);
+            map.put("F", 0.0);
+
+            Log.d("grades", "Crated 4-scale list");
+        } else {
+
+            map.put("A+", 9.0);
+            map.put("A", 8.0);
+            map.put("B+", 7.0);
+            map.put("B", 6.0);
+            map.put("C+", 5.0);
+            map.put("C", 4.0);
+            map.put("D+", 3.0);
+            map.put("D", 2.0);
+            map.put("F", 0.0);
+            Log.d("grades", "Crated 9-scale list");
+
+
+        }
+
 
         creditTimes = map.get(grade) * credit;
-        Log.d("mytag", "grades created");
 
 
     }
