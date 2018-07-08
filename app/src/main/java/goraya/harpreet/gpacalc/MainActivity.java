@@ -9,12 +9,14 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
@@ -26,6 +28,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private EditText mCredit;
     private Spinner spinner;
     private boolean four_scale;
+    private ListView listView;
+    private List list;
+    private Grades grades;
 
     private ArrayList<Grades> gradesList = new ArrayList<>();
 
@@ -44,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         mGpaResult = findViewById(R.id.result_Textview);
         mCredit = findViewById(R.id.credit_enter_box);
         spinner = findViewById(R.id.spinner);
+        listView = (ListView) findViewById(R.id.result_listview);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.gpa_types, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
@@ -68,6 +74,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     }
 
+    public void populateList() {
+
+        list = gradesList;
+
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1, list);
+        listView.setAdapter(arrayAdapter);
+    }
+
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
@@ -78,15 +92,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         if (v.getId() == mAddCourseButton.getId()) {
 
             if (isValid()) {
-
                 String gpa = mEnterGPA.getText().toString();
                 Double credit = Double.parseDouble(mCredit.getText().toString());
 
-                Grades grades = new Grades(gpa, credit, four_scale);
+                grades = new Grades(gpa, credit, four_scale);
                 gradesList.add(grades);
 
                 Log.d("mytag", "filling list");
-                displayGradeList();
+                populateList(); //POPULATING LIST
                 mClearButton.setVisibility(View.VISIBLE);
                 Log.d("mytag", "display result");
                 mEnterGPA.setText("");
@@ -118,13 +131,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
 
-    public void displayGradeList() {
-        mGpaResult.setText(null);
-        for (Grades g : gradesList) {
-            mGpaResult.append(g.toString() + "\n");
-        }
-    }
-
     public double calculteGPA() {
         double gpaResult = 0;
         double totalCredits = 0;
@@ -149,75 +155,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
 }
-
-
-class Grades {
-
-    private String grade;
-    private double credit;
-    private double creditTimes;
-    private static HashMap<String, Double> map = new HashMap<>();
-
-    public Grades(String g, double c, boolean four_scale) {
-        grade = g;
-        credit = c;
-
-        if (four_scale == true) {
-            map.put("A+", 4.0);
-            map.put("A", 3.8);
-            map.put("B+", 3.3);
-            map.put("B", 3.0);
-            map.put("C+", 2.3);
-            map.put("C", 2.0);
-            map.put("D+", 1.3);
-            map.put("D", 1.0);
-            map.put("F", 0.0);
-
-            Log.d("grades", "Crated 4-scale list");
-        } else {
-
-            map.put("A+", 9.0);
-            map.put("A", 8.0);
-            map.put("B+", 7.0);
-            map.put("B", 6.0);
-            map.put("C+", 5.0);
-            map.put("C", 4.0);
-            map.put("D+", 3.0);
-            map.put("D", 2.0);
-            map.put("F", 0.0);
-            Log.d("grades", "Crated 9-scale list");
-
-
-        }
-
-
-        creditTimes = map.get(grade) * credit;
-
-
-    }
-
-
-    public String getGrade() {
-        return grade;
-    }
-
-
-    public double getCredit() {
-        return credit; //3
-    }
-
-    public double getCreditTimes() {
-        return creditTimes;
-    }
-
-
-    @Override
-    public String toString() {
-        return getGrade() + " - " + getCredit();
-    }
-}
-
-
 
 
 
