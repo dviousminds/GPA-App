@@ -85,7 +85,7 @@
             android:layout_below="@id/calc_button"
             android:layout_centerHorizontal="true"
             android:maxEms="4"
-            android:textSize="14sp"
+            android:textSize="24dp"
             android:visibility="visible" />
 
         <Button

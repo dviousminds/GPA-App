@@ -4,6 +4,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputFilter;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -15,14 +18,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private Button mCalculateButton;
     private Button mAddCourseButton;
-    private Button mClearButton;
     private EditText mEnterGPA;
     private TextView mGpaResult;
     private EditText mCredit;
@@ -43,7 +44,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         mCalculateButton = findViewById(R.id.calc_button);
         mAddCourseButton = findViewById(R.id.add_button);
-        mClearButton = findViewById(R.id.clear_button);
         mEnterGPA = findViewById(R.id.enter_gps_box);
         mEnterGPA.setFilters(new InputFilter[]{new InputFilter.AllCaps(), new InputFilter.LengthFilter(2)});
         mGpaResult = findViewById(R.id.result_Textview);
@@ -68,13 +68,25 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         } else {
             four_scale = false;
             Log.d("grades", "four_scale is now false");
-
         }
-
-
     }
 
-    public void populateList() {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.clear_button) {
+            clearResultList();
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    public void populateGPAResultList() {
 
         list = gradesList;
 
@@ -85,6 +97,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
+    }
+
+    //Clear the grade list result
+    public void clearResultList() {
+        gradesList.clear();
+        mGpaResult.setText("");
     }
 
 
@@ -99,8 +117,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 gradesList.add(grades);
 
                 Log.d("mytag", "filling list");
-                populateList(); //POPULATING LIST
-                mClearButton.setVisibility(View.VISIBLE);
+                populateGPAResultList(); //POPULATING LIST
                 Log.d("mytag", "display result");
                 mEnterGPA.setText("");
                 mCredit.setText("");
@@ -113,13 +130,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         } else if (v.getId() == mCalculateButton.getId()) {
 
-
             mGpaResult.setText(String.format("GPA: %.2f", calculteGPA()));
-
-        } else if (v.getId() == mClearButton.getId()) {
-            gradesList.clear();
-            mGpaResult.setText("");
-            mClearButton.setVisibility(View.INVISIBLE);
         } else if (v.getId() == spinner.getId()) {
 
 

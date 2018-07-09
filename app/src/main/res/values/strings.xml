@@ -10,4 +10,6 @@
         <item>4.0 GPA</item>
         <item>9.0 GPA</item>
     </string-array>
+    <string name="Options">Options</string>
+    <string name="about_us">About us</string>
 </resources>
