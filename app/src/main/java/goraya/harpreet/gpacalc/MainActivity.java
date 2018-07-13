@@ -1,6 +1,7 @@
 package goraya.harpreet.gpacalc;
 
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputFilter;
 import android.util.Log;
@@ -19,9 +20,9 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
-
     private Button mCalculateButton;
     private Button mAddCourseButton;
     private EditText mEnterGPA;
@@ -30,45 +31,92 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private Spinner spinner;
     private boolean four_scale;
     private ListView listView;
-    private List list;
-    private Grades grades;
-
-    private ArrayList<Grades> gradesList = new ArrayList<>();
-
+    public List list;
+    public Grades grades;
+    private ArrayList<Grades> gradesList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if (savedInstanceState == null) {
+            gradesList = new ArrayList<>();
+            Log.d("onCreate", "onCreate: new intance created");
+        } else {
+            gradesList = savedInstanceState.getParcelableArrayList("myGradeList");
+        }
 
         mCalculateButton = findViewById(R.id.calc_button);
         mAddCourseButton = findViewById(R.id.add_button);
         mEnterGPA = findViewById(R.id.enter_gps_box);
         mEnterGPA.setFilters(new InputFilter[]{new InputFilter.AllCaps(), new InputFilter.LengthFilter(2)});
         mGpaResult = findViewById(R.id.result_Textview);
+
         mCredit = findViewById(R.id.credit_enter_box);
         spinner = findViewById(R.id.spinner);
-        listView = (ListView) findViewById(R.id.result_listview);
+        listView = findViewById(R.id.result_listview);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.gpa_types, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this); //runs spinner's onItemSelected
+    }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList("myGradeList", gradesList);
+        Log.d("onSavedIns", "onSaveInstanceState: saving grade list");
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        //   gradesList = savedInstanceState.getParcelableArrayList("myGradesList");
+
+    }
+
+    //Flips the scale of GPA 4.0 <=> 9.0
+    public void flipGPAScale() {
+        for (int i = 0; i < gradesList.size(); i++) {
+            gradesList.get(i).changeScale(four_scale);
+        }
     }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         String sSelected = parent.getItemAtPosition(position).toString();
         Toast.makeText(this, sSelected, Toast.LENGTH_SHORT).show();
+
         if (spinner.getSelectedItemPosition() == 0) {
-            Log.d("grades", "four_scale is now true");
+            Log.d("spinner", "four_scale is now true");
             four_scale = true;
+
+            flipGPAScale();
+
+            //If there are grades in the gradelist and a different gpa scale is selected,
+            //mGpaResult gets updated automatically (via calcuateButton)
+            if (!gradesList.isEmpty()) {
+                mCalculateButton.performClick();
+                Log.d("gradelist", "4.0: grade list not empty [Spinner]");
+            }
         } else {
             four_scale = false;
-            Log.d("grades", "four_scale is now false");
+
+            flipGPAScale();
+
+            //If there are grades in the gradelist and a different gpa scale is selected,
+            //mGpaResult gets updated automatically (via calcuateButton)
+            if (!gradesList.isEmpty()) {
+                mCalculateButton.performClick();
+                Log.d("gradelist", "9.0: grade list not empty [Spinner]");
+            }
+
+            Log.d("spinner", "four_scale is now false");
         }
+
     }
 
     @Override
@@ -105,8 +153,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         mGpaResult.setText("");
     }
 
-
     public void buttonClicked(View v) {
+
         if (v.getId() == mAddCourseButton.getId()) {
 
             if (isValid()) {
@@ -121,28 +169,22 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 Log.d("mytag", "display result");
                 mEnterGPA.setText("");
                 mCredit.setText("");
-
             } else {
                 Toast.makeText(getApplicationContext(), "Invalid input, try again.", Toast.LENGTH_SHORT).show();
                 mEnterGPA.setText("");
                 mCredit.setText("");
             }
-
         } else if (v.getId() == mCalculateButton.getId()) {
 
-            mGpaResult.setText(String.format("GPA: %.2f", calculteGPA()));
+            mGpaResult.setText(String.format(Locale.US, "GPA: %.2f", calculateGPA()));
         } else if (v.getId() == spinner.getId()) {
-
 
         } else {
             Toast.makeText(getApplicationContext(), "Umm, no buttons pressed?", Toast.LENGTH_SHORT).show();
         }
-
-
     }
 
-
-    public double calculteGPA() {
+    public double calculateGPA() {
         double gpaResult = 0;
         double totalCredits = 0;
         double totalCreditTimes = 0;
@@ -155,16 +197,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         return totalCreditTimes / totalCredits;
     }
 
-
     public boolean isValid() {
-        if (mCredit.getText() != null && mCredit.getText().toString() != "" && mEnterGPA.getText().toString() != "") {
-            if ((mEnterGPA.getText().toString().matches("[A-D][+-]?|F")) && (Integer.parseInt(mCredit.getText().toString()) >= 1)) {
-                return true;
-            }
+        if (mCredit.getText() != null && mCredit.getText().toString().equals("") && mEnterGPA.getText().toString().equals("")) {
+            return (mEnterGPA.getText().toString().matches("[A-D][+-]?|F")) && (Integer.parseInt(mCredit.getText().toString()) >= 1);
         }
         return false;
     }
-
 }
 
 
