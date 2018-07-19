@@ -12,4 +12,6 @@
     </string-array>
     <string name="Options">Options</string>
     <string name="about_us">About us</string>
+    <string name="edit_item">Edit Item</string>
+    <string name="delete_item">Delete Item</string>
 </resources>
