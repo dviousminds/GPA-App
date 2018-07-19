@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
-    private Button mCalculateButton;
     private Button mAddCourseButton;
     private EditText mEnterGPA;
     private TextView mGpaResult;
@@ -49,7 +48,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             gradesList = savedInstanceState.getParcelableArrayList("myGradeList");
         }
 
-        mCalculateButton = findViewById(R.id.calc_button);
         mAddCourseButton = findViewById(R.id.add_button);
         mEnterGPA = findViewById(R.id.enter_gps_box);
         mEnterGPA.setFilters(new InputFilter[]{new InputFilter.AllCaps(), new InputFilter.LengthFilter(2)});
@@ -102,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             //If there are grades in the gradelist and a different gpa scale is selected,
             //mGpaResult gets updated automatically (via calcuateButton)
             if (!gradesList.isEmpty()) {
-                mCalculateButton.performClick();
+                updateGpaText();
                 Log.d("gradelist", "4.0: grade list not empty [Spinner]");
             }
         } else {
@@ -113,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             //If there are grades in the gradelist and a different gpa scale is selected,
             //mGpaResult gets updated automatically (via calcuateButton)
             if (!gradesList.isEmpty()) {
-                mCalculateButton.performClick();
+                updateGpaText();
                 Log.d("gradelist", "9.0: grade list not empty [Spinner]");
             }
 
@@ -158,6 +156,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             Log.i("menu", "onContextItemSelected: delete menu");
             list.remove(info.position);
             arrayAdapter.notifyDataSetChanged();
+            updateGpaText(); //Update GPA when item is removed
         } else {
             Toast.makeText(getApplicationContext(), "No context menu item selected", Toast.LENGTH_SHORT).show();
         }
@@ -204,19 +203,21 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 Log.d("mytag", "display result");
                 mEnterGPA.setText("");
                 mCredit.setText("");
+
+                updateGpaText(); //Update Gpa when a new item is added
+
             } else {
                 Toast.makeText(getApplicationContext(), "Invalid input, try again.", Toast.LENGTH_SHORT).show();
                 mEnterGPA.setText("");
                 mCredit.setText("");
             }
-        } else if (v.getId() == mCalculateButton.getId()) {
-
-            mGpaResult.setText(String.format(Locale.US, "GPA: %.2f", calculateGPA()));
-        } else if (v.getId() == spinner.getId()) {
-
         } else {
             Toast.makeText(getApplicationContext(), "Umm, no buttons pressed?", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public void updateGpaText() {
+        mGpaResult.setText(String.format(Locale.US, "GPA: %.2f", calculateGPA()));
     }
 
     //Calculates the GPA
