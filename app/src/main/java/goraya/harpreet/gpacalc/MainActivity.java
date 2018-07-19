@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private Spinner spinner;
     private boolean four_scale;
     private ListView listView;
+    private ArrayAdapter arrayAdapter;
     public List list;
     public Grades grades;
     private ArrayList<Grades> gradesList;
@@ -140,8 +141,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public void populateGPAResultList() {
 
         list = gradesList;
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, list);
+        arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, list);
         listView.setAdapter(arrayAdapter);
+
 
         //Inflate context menu for listview
         registerForContextMenu(listView);
@@ -154,9 +156,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             Log.i("menu", "onContextItemSelected: edit menu");
         } else if (item.getItemId() == R.id.cm_delete_menu) {
             Log.i("menu", "onContextItemSelected: delete menu");
+            list.remove(info.position);
+            arrayAdapter.notifyDataSetChanged();
         } else {
             Toast.makeText(getApplicationContext(), "No context menu item selected", Toast.LENGTH_SHORT).show();
         }
+
 
         return super.onContextItemSelected(item);
     }
@@ -193,7 +198,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 gradesList.add(grades);
 
                 Log.d("mytag", "filling list");
+
                 populateGPAResultList(); //POPULATING LIST
+
                 Log.d("mytag", "display result");
                 mEnterGPA.setText("");
                 mCredit.setText("");
