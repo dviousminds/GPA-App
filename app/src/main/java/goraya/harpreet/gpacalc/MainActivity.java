@@ -153,11 +153,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         mGpaResult.setText("");
     }
 
+    //Handel's button clicks
     public void buttonClicked(View v) {
 
-        if (v.getId() == mAddCourseButton.getId()) {
+        if (v.getId() == mAddCourseButton.getId()) { //If add button is clicked
 
             if (isValid()) {
+
                 String gpa = mEnterGPA.getText().toString();
                 Double credit = Double.parseDouble(mCredit.getText().toString());
 
@@ -184,6 +186,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
+    //Calculates the GPA
     public double calculateGPA() {
         double gpaResult = 0;
         double totalCredits = 0;
@@ -197,8 +200,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         return totalCreditTimes / totalCredits;
     }
 
+    //Checks if the Credit and Grade entered by user is correct
     public boolean isValid() {
-        if (mCredit.getText() != null && mCredit.getText().toString().equals("") && mEnterGPA.getText().toString().equals("")) {
+        Log.d("valid", "Checking isValid? : credit" + mCredit.getText().toString() + " GPA:  " + mEnterGPA.getText().toString());
+
+        if (mCredit.getText() != null && !mCredit.getText().toString().isEmpty() && !mEnterGPA.getText().toString().isEmpty()) {
+            Log.d("valid", "VALID ENTRY" + mCredit.getText().toString() + " GPA:  " + mEnterGPA.getText().toString());
             return (mEnterGPA.getText().toString().matches("[A-D][+-]?|F")) && (Integer.parseInt(mCredit.getText().toString()) >= 1);
         }
         return false;
