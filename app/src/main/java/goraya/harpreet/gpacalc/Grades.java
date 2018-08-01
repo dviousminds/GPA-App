@@ -80,8 +80,8 @@ class Grades implements Parcelable {
 
     @Override
     public String toString() {
-        return getGrade() + " - " + getCredit();
-    }
+        return getGrade() + " : " + Double.valueOf(getCredit()).intValue();
+    }                               //Converts double to int to get rid of decimals
 
     private Grades(Parcel in) {
         grade = in.readString();

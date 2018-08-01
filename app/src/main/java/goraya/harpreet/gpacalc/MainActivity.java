@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public void populateGPAResultList() {
 
         list = gradesList;
-        arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, list);
+        arrayAdapter = new ArrayAdapter<String>(this, R.layout.center_list_item, list);
         listView.setAdapter(arrayAdapter);
 
 
